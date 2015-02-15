@@ -70,6 +70,8 @@ class VideoDownloader implements Runnable{
     private void closeDownloadingDialog(JFrame downloading){
         downloading.setCursor(Cursor.getDefaultCursor());
 
+        Solution.mainWindow.setLocation(downloading.getX(), downloading.getY());
+
         downloading.dispose();
         Solution.mainWindow.setVisible(true);
     }
