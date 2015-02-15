@@ -7,14 +7,14 @@ import java.awt.event.ActionListener;
  * Created by LabunskyA.
  * Protected with GNU GPLv2 and your honesty
  */
-public class Window extends JFrame {
-    public JTextField url = new JTextField();
+class Window extends JFrame {
+    private final JTextField url = new JTextField();
 
     Window(){
         super("YouTube Multi-Threaded Downloader");
         setLayout(new FlowLayout());
         getContentPane().setBackground(Color.WHITE);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         JTextField urlPointer = new JTextField("Url: ");
         JButton getButton = new JButton();
@@ -37,9 +37,7 @@ public class Window extends JFrame {
                 Thread videoDownloadThread = new Thread(videoDownloader);
 
                 urlGenThread.start();
-                synchronized (urlGenThread){
-                    videoDownloadThread.start();
-                }
+                videoDownloadThread.start();
             }
         });
 

@@ -14,26 +14,11 @@ import java.nio.channels.ReadableByteChannel;
  * Created by LabunskyA.
  * Protected with GNU GPLv2 and your honesty
  */
-public class VideoDownloader implements Runnable{
-    private String url;
-    JFrame downloading = new JFrame("Downloading");
+class VideoDownloader implements Runnable{
+    private final String url;
 
     VideoDownloader(String url){
         this.url = url;
-
-        JTextField pleaseWait = new JTextField("Please, wait");
-        Font font = new Font("Open Sans", Font.BOLD, 14);
-
-        pleaseWait.setEnabled(false);
-        pleaseWait.setFont(font);
-        pleaseWait.setHorizontalAlignment(JTextField.CENTER);
-        pleaseWait.setDisabledTextColor(Color.BLACK);
-
-        downloading.getContentPane().setBackground(Color.WHITE);
-        downloading.setPreferredSize(Solution.mainWindow.getSize());
-        downloading.add(pleaseWait);
-        downloading.pack();
-        downloading.setLocationRelativeTo(null);
     }
 
     @Override
@@ -45,31 +30,47 @@ public class VideoDownloader implements Runnable{
             fileChooser.setFileFilter(filter);
 
             if (fileChooser.showSaveDialog(Solution.mainWindow) == JFileChooser.APPROVE_OPTION) {
-                URL downloadURL = new URL(Solution.urlToFile);
+                URL downloadURL = new URL(URLGenerator.urlToFile);
                 ReadableByteChannel byteChannel = Channels.newChannel(downloadURL.openStream());
                 FileOutputStream fileOutputStream = new FileOutputStream(fileChooser.getSelectedFile());
 
-                showDownloadingDialog();
+                JFrame downloading = new JFrame("Downloading");
+
+                showDownloadingDialog(downloading);
 
                 fileOutputStream.getChannel().transferFrom(byteChannel, 0, Long.MAX_VALUE);
                 fileOutputStream.close();
 
-                closeDownloadingDialog();
+                closeDownloadingDialog(downloading);
             }
         } catch (MalformedURLException ignored) {} catch (FileNotFoundException ignored) {} catch (IOException ignored) {}
     }
 
-    private void showDownloadingDialog(){
+    private void showDownloadingDialog(JFrame downloading){
+        JTextField pleaseWait = new JTextField("Please, wait");
+        Font font = new Font("Open Sans", Font.BOLD, 14);
+
+        pleaseWait.setEnabled(false);
+        pleaseWait.setFont(font);
+        pleaseWait.setHorizontalAlignment(JTextField.CENTER);
+        pleaseWait.setDisabledTextColor(Color.BLACK);
+
+        downloading.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        downloading.getContentPane().setBackground(Color.WHITE);
+        downloading.setPreferredSize(Solution.mainWindow.getSize());
+        downloading.add(pleaseWait);
+        downloading.pack();
+        downloading.setLocationRelativeTo(null);
         downloading.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
         Solution.mainWindow.setVisible(false);
         downloading.setVisible(true);
     }
 
-    private void closeDownloadingDialog(){
+    private void closeDownloadingDialog(JFrame downloading){
         downloading.setCursor(Cursor.getDefaultCursor());
 
-        downloading.setVisible(false);
+        downloading.dispose();
         Solution.mainWindow.setVisible(true);
     }
 }

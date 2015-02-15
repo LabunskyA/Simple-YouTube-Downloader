@@ -8,27 +8,27 @@ import java.net.URL;
  * Created by LabunskyA.
  * Protected with GNU GPLv2 and your honesty
  */
-public class URLGenerator implements Runnable {
-    static Boolean ready = false;
-    private String url;
+class URLGenerator implements Runnable {
+    static String urlToFile;
+    private final String url;
 
     URLGenerator(String url){
         this.url = url;
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         String videoID = url.substring(url.indexOf("v=") + 2);
         if (videoID.contains("&"))
             videoID = videoID.substring(videoID.indexOf("&"));
         String htmlCode = getPage("http://johneckman.com/yt/getvideo.php?videoid=" + videoID + "&type=Download");
 
-        Solution.urlToFile = htmlCode.substring(htmlCode.indexOf("video/mp4"));
-        Solution.urlToFile = Solution.urlToFile.substring(Solution.urlToFile.indexOf("=\"") + 2);
-        Solution.urlToFile = "http://johneckman.com/yt/" + Solution.urlToFile.substring(0, Solution.urlToFile.indexOf("\""));
+        urlToFile = htmlCode.substring(htmlCode.indexOf("video/mp4"));
+        urlToFile = urlToFile.substring(urlToFile.indexOf("=\"") + 2);
+        urlToFile = "http://johneckman.com/yt/" + urlToFile.substring(0, urlToFile.indexOf("\""));
     }
 
-    public static String getPage(String url) { //get page source from the url
+    private static String getPage(String url) { //get page source from the url
         URL pageURL = null;
         try {
             pageURL = new URL(url);
@@ -39,6 +39,7 @@ public class URLGenerator implements Runnable {
         StringBuilder stringBuffer = new StringBuilder();
 
         try {
+            assert pageURL != null;
             InputStream inputStream = pageURL.openConnection().getInputStream();
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
 
