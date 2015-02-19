@@ -16,9 +16,12 @@ import java.nio.channels.ReadableByteChannel;
  */
 class VideoDownloader implements Runnable{
     private final String url;
+    private final String videoTitle;
 
     VideoDownloader(String url){
         this.url = url;
+        String videoPageHTMLCode = URLGenerator.getPage(url);
+        videoTitle = videoPageHTMLCode.substring(videoPageHTMLCode.indexOf("title>") + 6, videoPageHTMLCode.indexOf("</ti"));
     }
 
     @Override
@@ -26,7 +29,7 @@ class VideoDownloader implements Runnable{
         try {
             FileNameExtensionFilter filter = new FileNameExtensionFilter("MP4 Video Format", "mp4", "MP4");
             JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setSelectedFile(new File(url.substring(url.indexOf("=") + 1) + ".mp4"));
+            fileChooser.setSelectedFile(new File(videoTitle + ".mp4"));
             fileChooser.setFileFilter(filter);
 
             if (fileChooser.showSaveDialog(Solution.mainWindow) == JFileChooser.APPROVE_OPTION) {
@@ -56,21 +59,19 @@ class VideoDownloader implements Runnable{
         pleaseWait.setDisabledTextColor(Color.BLACK);
 
         downloading.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        downloading.setResizable(false);
         downloading.getContentPane().setBackground(Color.WHITE);
         downloading.setPreferredSize(Solution.mainWindow.getSize());
         downloading.add(pleaseWait);
         downloading.pack();
-        downloading.setLocationRelativeTo(null);
-        downloading.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        downloading.setLocation(Solution.mainWindow.getLocation());
 
         Solution.mainWindow.setVisible(false);
         downloading.setVisible(true);
     }
 
     private void closeDownloadingDialog(JFrame downloading){
-        downloading.setCursor(Cursor.getDefaultCursor());
-
-        Solution.mainWindow.setLocation(downloading.getX(), downloading.getY());
+        Solution.mainWindow.setLocation(downloading.getLocation());
 
         downloading.dispose();
         Solution.mainWindow.setVisible(true);

@@ -12,6 +12,7 @@ class Window extends JFrame {
 
     Window(){
         super("YouTube Multi-Threaded Downloader");
+        setResizable(false);
         setLayout(new FlowLayout());
         getContentPane().setBackground(Color.WHITE);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

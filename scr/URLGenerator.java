@@ -28,13 +28,11 @@ class URLGenerator implements Runnable {
         urlToFile = "http://johneckman.com/yt/" + urlToFile.substring(0, urlToFile.indexOf("\""));
     }
 
-    private static String getPage(String url) { //get page source from the url
+    static String getPage(String url) { //get page source from the url
         URL pageURL = null;
         try {
             pageURL = new URL(url);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        } catch (MalformedURLException ignored) {}
 
         StringBuilder stringBuffer = new StringBuilder();
 
